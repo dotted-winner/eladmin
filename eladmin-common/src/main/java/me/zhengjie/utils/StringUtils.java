@@ -264,4 +264,18 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
         }
         return ipAddrStr.toString();
     }
+
+    public static String makeUpFixedLength(String string, int length) {
+        StringBuilder stringBuilder = new StringBuilder();
+        for (int i = 0; i < length - string.length(); i++) {
+            stringBuilder.append("0");
+        }
+        stringBuilder.append(string);
+        return stringBuilder.toString();
+    }
+
+    public static void main(String[] args) {
+        String s = makeUpFixedLength("111", 5);
+        System.out.println(s);
+    }
 }

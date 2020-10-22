@@ -62,6 +62,13 @@ public interface PatientNosService {
     PatientNosDto create(PatientNos resources);
 
     /**
+     * 创建
+     * @param resources /
+     * @return PatientNosDto
+     */
+    PatientNosDto create1(PatientNos resources);
+
+    /**
     * 编辑
     * @param resources /
     */
@@ -80,4 +87,6 @@ public interface PatientNosService {
     * @throws IOException /
     */
     void download(List<PatientNosDto> all, HttpServletResponse response) throws IOException;
+
+
 }

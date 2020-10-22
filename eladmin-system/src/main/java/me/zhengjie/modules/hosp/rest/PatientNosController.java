@@ -15,6 +15,7 @@
 */
 package me.zhengjie.modules.hosp.rest;
 
+import me.zhengjie.annotation.AnonymousAccess;
 import me.zhengjie.annotation.Log;
 import me.zhengjie.modules.hosp.domain.PatientNos;
 import me.zhengjie.modules.hosp.service.PatientNosService;
@@ -28,6 +29,9 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import io.swagger.annotations.*;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Stream;
 import javax.servlet.http.HttpServletResponse;
 
 /**
@@ -66,6 +70,23 @@ public class PatientNosController {
     public ResponseEntity<Object> create(@Validated @RequestBody PatientNos resources){
         return new ResponseEntity<>(patientNosService.create(resources),HttpStatus.CREATED);
     }
+
+    @PostMapping("/tradition")
+    @Log("新增挂号管理")
+    @ApiOperation("新增挂号管理无权限验证")
+    @AnonymousAccess
+    public ResponseEntity<Object> create1(@Validated @RequestBody PatientNos resources){
+        return new ResponseEntity<>(patientNosService.create(resources),HttpStatus.CREATED);
+    }
+
+    @PostMapping("/parallel")
+    @Log("新增挂号管理")
+    @ApiOperation("新增挂号管理无权限验证")
+    @AnonymousAccess
+    public ResponseEntity<Object> create2(@Validated @RequestBody PatientNos resources){
+        return new ResponseEntity<>(patientNosService.create1(resources),HttpStatus.CREATED);
+    }
+
 
     @PutMapping
     @Log("修改挂号管理")

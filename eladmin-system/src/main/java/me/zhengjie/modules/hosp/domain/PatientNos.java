@@ -36,7 +36,6 @@ import java.io.Serializable;
 public class PatientNos implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     @ApiModelProperty(value = "号源id")
     private Long id;
@@ -60,7 +59,7 @@ public class PatientNos implements Serializable {
 
     @Column(name = "nos_id")
     @ApiModelProperty(value = "号源id")
-    private String nosId;
+    private long nosId;
 
     @Column(name = "no_no")
     @ApiModelProperty(value = "号源编号")

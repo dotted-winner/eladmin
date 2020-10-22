@@ -17,6 +17,7 @@ package me.zhengjie.modules.hosp.service.dto;
 
 import lombok.Data;
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.List;
 import me.zhengjie.annotation.Query;
 
@@ -34,9 +35,9 @@ public class NosQueryCriteria{
 
     /** 精确 */
     @Query
-    private Timestamp releaseDate;
+    private LocalDate releaseDate;
 
     /** 精确 */
     @Query
-    private Timestamp clinicDate;
+    private LocalDate clinicDate;
 }

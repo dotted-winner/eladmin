@@ -44,7 +44,7 @@ public class PatientNosDto implements Serializable {
     private String status;
 
     /** 号源id */
-    private String nosId;
+    private long nosId;
 
     /** 号源编号 */
     private String noNo;

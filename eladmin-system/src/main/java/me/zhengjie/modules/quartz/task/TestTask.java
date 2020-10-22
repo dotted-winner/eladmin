@@ -16,10 +16,20 @@
 package me.zhengjie.modules.quartz.task;
 
 import lombok.extern.slf4j.Slf4j;
+import me.zhengjie.modules.hosp.service.NosService;
+import me.zhengjie.modules.hosp.service.dto.NosDto;
+import me.zhengjie.modules.hosp.service.dto.NosQueryCriteria;
+import me.zhengjie.utils.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
+
+import java.time.LocalDate;
+import java.util.List;
 
 /**
  * 测试用
+ *
  * @author Zheng Jie
  * @date 2019-01-08
  */
@@ -27,15 +37,31 @@ import org.springframework.stereotype.Component;
 @Component
 public class TestTask {
 
-    public void run(){
+    @Autowired
+    private NosService nosService;
+
+    @Autowired
+    private RedisTemplate redisTemplate;
+
+    public void run() {
         log.info("run 执行成功");
+
     }
 
-    public void run1(String str){
-        log.info("run1 执行成功，参数为： {}" + str);
+    public void run1(String str) {
+        log.info("run1 执行，参数为： {}" + str);
+        NosQueryCriteria query = new NosQueryCriteria();
+        query.setReleaseDate(LocalDate.now());
+        List<NosDto> nosToday = nosService.queryAll(query);
+        nosToday.forEach(no -> {
+            for (int i = 1; i <= no.getNumbers(); i++) {
+                redisTemplate.opsForList().leftPush(no.getId(), StringUtils.makeUpFixedLength(i + "", 3));
+            }
+            System.out.println(no.getUsername() + no.getReleaseDate() + no.getNumbers());
+        });
     }
 
-    public void run2(){
+    public void run2() {
         log.info("run2 执行成功");
     }
 }
