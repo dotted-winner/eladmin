@@ -16,6 +16,7 @@
 package me.zhengjie.modules.hosp.service.impl;
 
 import cn.hutool.core.util.IdUtil;
+import lombok.extern.slf4j.Slf4j;
 import me.zhengjie.modules.hosp.domain.PatientNos;
 import me.zhengjie.exception.EntityExistException;
 import me.zhengjie.modules.hosp.service.NosService;
@@ -48,6 +49,7 @@ import java.util.LinkedHashMap;
  * @description 服务实现
  * @date 2020-10-01
  **/
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class PatientNosServiceImpl implements PatientNosService {
@@ -80,33 +82,64 @@ public class PatientNosServiceImpl implements PatientNosService {
 
     @Override
     public synchronized PatientNosDto create(PatientNos resources) {
+        log.info("挂号流程开始");
+        long starttime = System.currentTimeMillis();
+        log.info("---查询号源开始");
         PatientNos patientNos = new PatientNos();
         patientNos.setNosId(resources.getNosId());
         Example<? extends PatientNos> ss = Example.of(patientNos);
         // 已经存在数量
         long exsitNum = patientNosRepository.count(ss);
         NosDto nosInfo = nosService.findById(resources.getNosId());
+        long nosEndTime = System.currentTimeMillis();
+        log.info("---查询号源结束");
+        log.info("---查询号源耗时(ms):" + (nosEndTime - starttime));
         if (exsitNum >= nosInfo.getNumbers()) {
+            long endtime = System.currentTimeMillis();
+            log.info("挂号流程结束");
+            log.info("整个流程耗时(ms):" + (endtime - starttime));
             throw new RuntimeException("已无号源");
         }
+        log.info("---挂号开始");
         resources.setNoNo(StringUtils.makeUpFixedLength((exsitNum + 1) + "", 3));
         resources.setId(IdUtil.getSnowflake(1, 2).nextId());
         resources.setCreateTime(new Timestamp(System.currentTimeMillis()));
         resources.setUpdateTime(new Timestamp(System.currentTimeMillis()));
-        return patientNosMapper.toDto(patientNosRepository.save(resources));
+        PatientNosDto res = patientNosMapper.toDto(patientNosRepository.save(resources));
+        log.info("---挂号结束");
+        long endtime = System.currentTimeMillis();
+        log.info("---挂号耗时(ms):" + (endtime - nosEndTime));
+        log.info("挂号流程结束");
+        log.info("整个流程耗时(ms):" + (endtime - starttime));
+        return res;
     }
 
     @Override
     public PatientNosDto create1(PatientNos resources) {
+        log.info("挂号流程开始");
+        long starttime = System.currentTimeMillis();
+        log.info("---查询号源开始");
         String nos = (String) redisTemplate.opsForList().rightPop(resources.getNosId());
+        long nosEndTime = System.currentTimeMillis();
+        log.info("---查询号源结束");
+        log.info("---查询号源耗时(ms):" + (nosEndTime - starttime));
         if (nos == null) {
+            long endtime = System.currentTimeMillis();
+            log.info("挂号流程结束");
+            log.info("整个流程耗时(ms):" + (endtime - starttime));
             throw new RuntimeException("已无号源");
         }
+        log.info("---挂号开始");
         resources.setNoNo(StringUtils.makeUpFixedLength(nos, 3));
         resources.setId(IdUtil.getSnowflake(1, 2).nextId());
         resources.setCreateTime(new Timestamp(System.currentTimeMillis()));
         resources.setUpdateTime(new Timestamp(System.currentTimeMillis()));
-        return patientNosMapper.toDto(patientNosRepository.save(resources));
+        PatientNosDto res = patientNosMapper.toDto(patientNosRepository.save(resources));
+        long endtime = System.currentTimeMillis();
+        log.info("---挂号耗时(ms):" + (endtime - nosEndTime));
+        log.info("挂号流程结束");
+        log.info("整个流程耗时(ms):" + (endtime - starttime));
+        return res;
     }
 
     @Override
